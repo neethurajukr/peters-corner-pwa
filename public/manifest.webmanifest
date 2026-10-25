@@ -1,1 +1,22 @@
-{"name":"Peter's Corner Inventory & Billing","short_name":"Peter's Corner","start_url":"/","display":"standalone","background_color":"#f4f8fa","theme_color":"#087f8c","icons":[{"src":"/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]}
+{
+  "name": "Peter's Corner Inventory & Billing",
+  "short_name": "Peter's Corner",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#edf6ff",
+  "theme_color": "#1266b7",
+  "icons": [
+    {
+      "src": "/peters-corner-logo.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
