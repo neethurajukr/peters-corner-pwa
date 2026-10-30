@@ -37,7 +37,7 @@ export default function CloudBackup({db,onRestore}){
   const existing=await authorizedRequest('/rest/v1/shop_inventory_state?select=revision&owner_id=eq.'+session.user.id,session);
   const revision=existing[0]?.revision||0;
   const path='/rest/v1/shop_inventory_state'+(existing.length?'?owner_id=eq.'+session.user.id+'&revision=eq.'+revision:'');
-  const result=await request(path,session,{method:existing.length?'PATCH':'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(existing.length?{state:db,revision:revision+1,updated_at:new Date().toISOString()}:{owner_id:session.user.id,state:db,revision:1})});
+  const result=await authorizedRequest(path,session,{method:existing.length?'PATCH':'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(existing.length?{state:db,revision:revision+1,updated_at:new Date().toISOString()}:{owner_id:session.user.id,state:db,revision:1})});
   if(!result.length)throw Error('Cloud was updated elsewhere. Reload before uploading.');
   setRemote(null);setStatus('Cloud backup saved. Automatic synchronization is not active yet.');
  }catch(e){setStatus(e.message)}finally{setBusy(false)}}
