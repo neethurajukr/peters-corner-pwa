@@ -8,8 +8,21 @@ async function request(path,token,options={}){
  if(!response.ok)throw Error(data?.msg||data?.message||data?.error_description||'Cloud request failed ('+response.status+')');
  return data;
 }
+async function authorizedRequest(path,session,options={}) {
+ try{return await request(path,session.access_token,options)}
+ catch(error){
+  if(!/JWT expired|invalid JWT|401/i.test(error.message))throw error;
+  if(!session.refresh_token)throw Error('Session expired. Sign out and sign in again.');
+  const refreshed=await request('/auth/v1/token?grant_type=refresh_token',null,{method:'POST',body:JSON.stringify({refresh_token:session.refresh_token})});
+  const next={...session,access_token:refreshed.access_token,refresh_token:refreshed.refresh_token||session.refresh_token};
+  sessionStorage.setItem(tokenKey,JSON.stringify(next));
+  window.dispatchEvent(new CustomEvent('peters-cloud-session-refreshed',{detail:next}));
+  return request(path,next.access_token,options);
+ }
+}
 export default function CloudBackup({db,onRestore}){
  const [session,setSession]=useState(()=>{try{return JSON.parse(sessionStorage.getItem(tokenKey))}catch{return null}});
+ React.useEffect(()=>{const onRefresh=e=>setSession(e.detail);window.addEventListener('peters-cloud-session-refreshed',onRefresh);return()=>window.removeEventListener('peters-cloud-session-refreshed',onRefresh)},[]);
  const [email,setEmail]=useState(''),[password,setPassword]=useState(''),[status,setStatus]=useState(''),[busy,setBusy]=useState(false),[remote,setRemote]=useState(null);
  async function login(){setBusy(true);try{
   const result=await request('/auth/v1/token?grant_type=password',null,{method:'POST',body:JSON.stringify({email,password})});
@@ -17,14 +30,14 @@ export default function CloudBackup({db,onRestore}){
   sessionStorage.setItem(tokenKey,JSON.stringify(next));setSession(next);setPassword('');setStatus('Signed in. Your local stock has not changed.');
  }catch(e){setStatus(e.message)}finally{setBusy(false)}}
  async function getCloud(){setBusy(true);try{
-  const rows=await request('/rest/v1/shop_inventory_state?select=state,revision,updated_at&owner_id=eq.'+session.user.id,session.access_token);
+  const rows=await authorizedRequest('/rest/v1/shop_inventory_state?select=state,revision,updated_at&owner_id=eq.'+session.user.id,session);
   setRemote(rows[0]||null);setStatus(rows.length?'Cloud backup found. Review before restoring.':'No cloud backup found yet.');
  }catch(e){setStatus(e.message)}finally{setBusy(false)}}
  async function upload(){if(!confirm('Replace the cloud backup with this device\'s data? Export a Backup first.'))return;setBusy(true);try{
-  const existing=await request('/rest/v1/shop_inventory_state?select=revision&owner_id=eq.'+session.user.id,session.access_token);
+  const existing=await authorizedRequest('/rest/v1/shop_inventory_state?select=revision&owner_id=eq.'+session.user.id,session);
   const revision=existing[0]?.revision||0;
   const path='/rest/v1/shop_inventory_state'+(existing.length?'?owner_id=eq.'+session.user.id+'&revision=eq.'+revision:'');
-  const result=await request(path,session.access_token,{method:existing.length?'PATCH':'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(existing.length?{state:db,revision:revision+1,updated_at:new Date().toISOString()}:{owner_id:session.user.id,state:db,revision:1})});
+  const result=await request(path,session,{method:existing.length?'PATCH':'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(existing.length?{state:db,revision:revision+1,updated_at:new Date().toISOString()}:{owner_id:session.user.id,state:db,revision:1})});
   if(!result.length)throw Error('Cloud was updated elsewhere. Reload before uploading.');
   setRemote(null);setStatus('Cloud backup saved. Automatic synchronization is not active yet.');
  }catch(e){setStatus(e.message)}finally{setBusy(false)}}
