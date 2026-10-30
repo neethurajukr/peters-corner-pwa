@@ -29,6 +29,14 @@ export default function CloudStatus({db}){
  const row=status.row;
  const localSales=new Set((db.sales||[]).map(s=>s.id));
  const missingSales=row?.state?.sales?.filter(s=>!localSales.has(s.id)).length||0;
+ const deviceBatches=new Map((db.batches||[]).map(b=>[b.id,b]));
+ const cloudBatches=new Map((row?.state?.batches||[]).map(b=>[b.id,b]));
+ const differentCloudBatches=(row?.state?.batches||[]).filter(b=>!deviceBatches.has(b.id)||Number(deviceBatches.get(b.id).qty)!==Number(b.qty)).length;
+ const deviceOnlyBatches=(db.batches||[]).filter(b=>!cloudBatches.has(b.id)).length;
+ const deviceProducts=new Set((db.products||[]).map(p=>p.id));
+ const cloudProducts=new Set((row?.state?.products||[]).map(p=>p.id));
+ const cloudOnlyProducts=(row?.state?.products||[]).filter(p=>!deviceProducts.has(p.id)).length;
+ const deviceOnlyProducts=(db.products||[]).filter(p=>!cloudProducts.has(p.id)).length;
  const remoteSales=new Set((row?.state?.sales||[]).map(s=>s.id));
  const unsyncedSales=(db.sales||[]).filter(s=>!remoteSales.has(s.id)).length;
  return <div className="panel"><h3>Cloud sync status (read-only)</h3>
@@ -37,6 +45,6 @@ export default function CloudStatus({db}){
  {status.kind==='error'&&<p role="alert">{status.message}</p>}
  {status.kind==='ok'&&<><p>Cloud revision: {row?.revision??'Not found'} · Last saved: {row?.updated_at?new Date(row.updated_at).toLocaleString():'Never'}</p>
  <p>Cloud sales not on this device: <b>{missingSales}</b> · Device sales not in cloud: <b>{unsyncedSales}</b></p>
- <p className="muted">Read-only monitoring. Automatic writes and multi-device billing are NOT enabled. Do not overwrite cloud data from a stale device.</p></>}
+ <p>Cloud batches missing or with different quantities here: <b>{differentCloudBatches}</b> · Device-only batches: <b>{deviceOnlyBatches}</b></p><p>Cloud-only products: <b>{cloudOnlyProducts}</b> · Device-only products: <b>{deviceOnlyProducts}</b></p><p className="muted">Read-only monitoring. Automatic writes and multi-device billing are NOT enabled. Do not overwrite cloud data from a stale device.</p></>}
  </div>
 }
