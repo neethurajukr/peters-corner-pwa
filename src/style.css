@@ -56,3 +56,24 @@ footer{color:#7892aa}
 .brand .logo img{display:block;width:100%;height:100%;object-fit:contain;border-radius:12px}
 
 .invoice-import{margin-bottom:18px}.invoice-upload{display:inline-flex;align-items:center;gap:8px;padding:11px 15px;border-radius:12px;background:#e7f2ff;color:#15528b;cursor:pointer;font-weight:600}.invoice-upload input{display:none}.invoice-table-wrap{overflow-x:auto;margin:12px 0}.invoice-table{border-collapse:collapse;min-width:760px;width:100%;font-size:13px}.invoice-table th,.invoice-table td{padding:7px 5px;border-bottom:1px solid #dbe5ef;text-align:left}.invoice-table input:not([type=checkbox]){min-width:0;width:100%;padding:8px 5px}.invoice-table td:nth-child(2){min-width:205px}.invoice-table td:nth-child(3),.invoice-table td:nth-child(4),.invoice-table td:nth-child(5){min-width:82px}.invoice-table td:nth-child(6){min-width:140px}.invoice-import .actions{flex-wrap:wrap}
+
+
+/* Subtle Milma-inspired motion; no animation affects inventory or checkout logic. */
+@keyframes pc-enter{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pc-pop{0%{transform:scale(.97)}65%{transform:scale(1.025)}100%{transform:scale(1)}}
+@keyframes pc-shimmer{from{background-position:200% center}to{background-position:-200% center}}
+@media(prefers-reduced-motion:no-preference){
+ main>.panel,main>.stats,main>.twocol,main>h2{animation:pc-enter .38s ease-out both}
+ .panel{transition:box-shadow .24s ease,border-color .24s ease}
+ .panel:hover{box-shadow:0 10px 28px rgba(15,75,135,.09)}
+ .product{transition:transform .18s ease,box-shadow .18s ease,background-color .18s ease}
+ .product:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(22,88,150,.14)}
+ .product:active{transform:scale(.98)}
+ button:not(:disabled){transition:transform .16s ease,filter .16s ease,background-color .2s ease}
+ button:not(:disabled):active{transform:scale(.97)}
+ .stats strong{animation:pc-pop .4s ease-out both}
+ .brand .logo img{transition:transform .3s ease}
+ .brand .logo:hover img{transform:rotate(-3deg) scale(1.04)}
+ input:focus-visible,button:focus-visible,select:focus-visible{outline:3px solid rgba(28,135,218,.35);outline-offset:2px}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
