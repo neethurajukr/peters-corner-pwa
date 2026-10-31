@@ -24,7 +24,7 @@ async function readCloud(){
  }
 }
 export default function CloudStatus({db}){
- const [status,setStatus]=useState({kind:'checking'});
+ const [status,setStatus]=useState({kind:'checking'});const [expanded,setExpanded]=useState(false);
  useEffect(()=>{let active=true;async function check(){if(document.visibilityState==='hidden')return;const result=await readCloud();if(active)setStatus(result)}check();const timer=setInterval(check,30000);return()=>{active=false;clearInterval(timer)}},[]);
  const row=status.row;
  const localSales=new Set((db.sales||[]).map(s=>s.id));
@@ -39,12 +39,21 @@ export default function CloudStatus({db}){
  const deviceOnlyProducts=(db.products||[]).filter(p=>!cloudProducts.has(p.id)).length;
  const remoteSales=new Set((row?.state?.sales||[]).map(s=>s.id));
  const unsyncedSales=(db.sales||[]).filter(s=>!remoteSales.has(s.id)).length;
- return <div className="panel"><h3>Cloud sync status (read-only)</h3>
+ const counts=[missingSales,unsyncedSales,differentCloudBatches,deviceOnlyBatches,cloudOnlyProducts,deviceOnlyProducts];
+ const healthy=status.kind==='ok'&&!!row&&counts.every(n=>n===0);
+ const labels=['Cloud sales missing locally','Device sales missing in cloud','Different cloud batches','Device-only batches','Cloud-only products','Device-only products'];
+ return <section className={'panel pc-cloud-panel '+(healthy?'pc-cloud-healthy':'pc-cloud-attention')}>
+ <button type="button" className="pc-cloud-toggle" aria-expanded={expanded} onClick={()=>setExpanded(v=>!v)}>
+ <span className="pc-cloud-title"><span aria-hidden="true">{healthy?'✓':'☁'}</span> Cloud sync status <span className="pc-cloud-chip">{status.kind==='checking'?'Checking…':healthy?'All checks match':status.kind==='signed-out'?'Sign in required':status.kind==='error'?'Connection issue':'Review status'}</span></span>
+ <span aria-hidden="true">{expanded?'⌃':'⌄'}</span>
+ </button>
+ {expanded&&<div className="pc-cloud-details">
  {status.kind==='checking'&&<p>Checking Supabase…</p>}
  {status.kind==='signed-out'&&<p>Sign in under Stock Entry to check cloud status.</p>}
  {status.kind==='error'&&<p role="alert">{status.message}</p>}
- {status.kind==='ok'&&<><p>Cloud revision: {row?.revision??'Not found'} · Last saved: {row?.updated_at?new Date(row.updated_at).toLocaleString():'Never'}</p>
- <p>Cloud sales not on this device: <b>{missingSales}</b> · Device sales not in cloud: <b>{unsyncedSales}</b></p>
- <p>Cloud batches missing or with different quantities here: <b>{differentCloudBatches}</b> · Device-only batches: <b>{deviceOnlyBatches}</b></p><p>Cloud-only products: <b>{cloudOnlyProducts}</b> · Device-only products: <b>{deviceOnlyProducts}</b></p><p className="muted">Read-only monitoring. Automatic writes and multi-device billing are NOT enabled. Do not overwrite cloud data from a stale device.</p></>}
- </div>
+ {status.kind==='ok'&&<><p className="muted">Cloud revision: {row?.revision??'Not found'} · Last saved: {row?.updated_at?new Date(row.updated_at).toLocaleString():'Never'}</p>
+ <div className="pc-cloud-grid">{labels.map((label,i)=><div key={label} className="pc-cloud-metric"><span>{label}</span><strong>{counts[i]}</strong></div>)}</div>
+ <p className="muted">Comparison is read-only and checked every 30 seconds while this page is visible. Matching counts do not guarantee that all data fields are identical or that every device has refreshed. Cloud writes require a confirmed sign-in and network connection.</p></>}
+ </div>}
+ </section>
 }
