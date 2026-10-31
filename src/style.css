@@ -88,3 +88,5 @@ footer{color:#7892aa}
 .pc-billing-side p{font-size:12px;color:#47728d;margin:2px 0 5px}
 @media(prefers-reduced-motion:no-preference){.pc-mascot{animation:pc-enter .55s ease-out both}.pc-billing-side:hover .pc-mascot{transform:translateY(-3px);transition:transform .25s ease}}
 @media(max-width:700px){.pc-billing-layout{display:block}.pc-billing-side{position:static;display:flex;align-items:center;gap:10px;padding:7px 12px;margin-bottom:12px;text-align:left}.pc-billing-side-title{flex-shrink:0}.pc-mascot{width:55px;height:67px;object-fit:contain;margin:0 0 0 auto;order:2}.pc-billing-side p{margin:0;font-size:11px}}
+
+.pc-billing-error,.pc-billing-success,.pc-billing-pending{padding:12px 14px;border-radius:12px;font-weight:650;margin-top:10px;overflow-wrap:anywhere}.pc-billing-error{background:#fff0ef;color:#a72b29;border:1px solid #f5c7c4}.pc-billing-success{background:#e9f8f0;color:#18623c;border:1px solid #bce5ce}.pc-billing-pending{background:#eaf4ff;color:#185b94;border:1px solid #c5e1fc}
