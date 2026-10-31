@@ -106,3 +106,8 @@ footer{color:#7892aa}
 .pc-cloud-metric strong{font-size:21px;color:#183c5e}
 @media(prefers-reduced-motion:no-preference){.pc-tech-mascot{animation:pc-enter .55s ease-out both,pc-tech-float 4s ease-in-out .6s infinite}@keyframes pc-tech-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}}
 @media(max-width:700px){.pc-cloud-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.pc-cloud-toggle{padding:13px}}
+
+
+/* Friendly stock-entry character, with gentle movement only when permitted. */
+.pc-stock-side{background:linear-gradient(180deg,#e9f7ff,#fffaf5)}
+@media(prefers-reduced-motion:no-preference){.pc-stock-mascot{animation:pc-enter .55s ease-out both,pc-stock-bob 4.6s ease-in-out .6s infinite}@keyframes pc-stock-bob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-4px) rotate(1deg)}}}
