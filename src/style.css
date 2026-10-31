@@ -90,3 +90,19 @@ footer{color:#7892aa}
 @media(max-width:700px){.pc-billing-layout{display:block}.pc-billing-side{position:static;display:flex;align-items:center;gap:10px;padding:7px 12px;margin-bottom:12px;text-align:left}.pc-billing-side-title{flex-shrink:0}.pc-mascot{width:55px;height:67px;object-fit:contain;margin:0 0 0 auto;order:2}.pc-billing-side p{margin:0;font-size:11px}}
 
 .pc-billing-error,.pc-billing-success,.pc-billing-pending{padding:12px 14px;border-radius:12px;font-weight:650;margin-top:10px;overflow-wrap:anywhere}.pc-billing-error{background:#fff0ef;color:#a72b29;border:1px solid #f5c7c4}.pc-billing-success{background:#e9f8f0;color:#18623c;border:1px solid #bce5ce}.pc-billing-pending{background:#eaf4ff;color:#185b94;border:1px solid #c5e1fc}
+
+
+.pc-cloud-panel{padding:0;overflow:hidden;border:1px solid #c9e5f8}
+.pc-cloud-healthy{border-color:#bfe9d5}
+.pc-cloud-toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:17px 19px;background:transparent;color:inherit;text-align:left;border:0;cursor:pointer}
+.pc-cloud-title{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-weight:800}
+.pc-cloud-title>span:first-child{display:grid;place-items:center;width:29px;height:29px;border-radius:50%;background:#e5f1ff;color:#1973bb}
+.pc-cloud-healthy .pc-cloud-title>span:first-child{background:#d6f8e6;color:#15965b}
+.pc-cloud-chip{font-size:12px;padding:5px 10px;border-radius:100px;background:#fff1d8;color:#865c1c;font-weight:700}
+.pc-cloud-healthy .pc-cloud-chip{background:#def8e9;color:#177a48}
+.pc-cloud-details{padding:0 19px 16px;border-top:1px solid #e6eff7}
+.pc-cloud-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+.pc-cloud-metric{display:flex;flex-direction:column;gap:5px;padding:12px;background:#f5faff;border-radius:12px;font-size:12px;color:#47657e}
+.pc-cloud-metric strong{font-size:21px;color:#183c5e}
+@media(prefers-reduced-motion:no-preference){.pc-tech-mascot{animation:pc-enter .55s ease-out both,pc-tech-float 4s ease-in-out .6s infinite}@keyframes pc-tech-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}}
+@media(max-width:700px){.pc-cloud-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.pc-cloud-toggle{padding:13px}}
