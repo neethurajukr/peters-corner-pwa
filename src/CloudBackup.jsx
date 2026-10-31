@@ -23,7 +23,7 @@ async function authorizedRequest(path,session,options={}) {
 export default function CloudBackup({db,onRestore}){
  const [session,setSession]=useState(()=>{try{return JSON.parse(sessionStorage.getItem(tokenKey))}catch{return null}});
  React.useEffect(()=>{const onRefresh=e=>setSession(e.detail);window.addEventListener('peters-cloud-session-refreshed',onRefresh);return()=>window.removeEventListener('peters-cloud-session-refreshed',onRefresh)},[]);
- const [email,setEmail]=useState(''),[password,setPassword]=useState(''),[status,setStatus]=useState(''),[busy,setBusy]=useState(false),[remote,setRemote]=useState(null);
+ const [expanded,setExpanded]=useState(false);const [email,setEmail]=useState(''),[password,setPassword]=useState(''),[status,setStatus]=useState(''),[busy,setBusy]=useState(false),[remote,setRemote]=useState(null);
  async function login(){setBusy(true);try{
   const result=await request('/auth/v1/token?grant_type=password',null,{method:'POST',body:JSON.stringify({email,password})});
   const next={access_token:result.access_token,refresh_token:result.refresh_token,user:result.user};
@@ -42,7 +42,7 @@ export default function CloudBackup({db,onRestore}){
   setRemote(null);setStatus('Cloud backup saved. Automatic synchronization is not active yet.');
  }catch(e){setStatus(e.message)}finally{setBusy(false)}}
  function restore(){if(!remote?.state)return;if(!confirm('Replace local inventory with the cloud backup? Export a Backup first.'))return;onRestore(remote.state);setStatus('Cloud data restored on this device.')}
- return <section className="panel"><h3>Supabase shop login & cloud backup</h3><p className="muted">Manual backup only for now. Existing stock stays on this device unless you explicitly restore.</p>
+ return <section className="panel pc-cloud-login"><button type="button" className="pc-section-toggle" aria-expanded={expanded} onClick={()=>setExpanded(v=>!v)}><span>☁ Shop login & cloud backup <small>{session?'Signed in':'Sign in to use cloud'}</small></span><span aria-hidden="true">{expanded?'⌃':'⌄'}</span></button>{expanded&&<><p className="muted">Cloud backup tools are manual. Do not upload a stale device over newer cloud sales.</p>
  {!session?<><label>Shop email<input type="email" value={email} onChange={e=>setEmail(e.target.value)}/></label><label>Password<input type="password" value={password} onChange={e=>setPassword(e.target.value)}/></label><button type="button" disabled={busy||!email||!password} onClick={login}>Sign in to shop</button></>:<><p>Signed in as {session.user.email}</p><div className="actions"><button type="button" className="secondary" disabled={busy} onClick={getCloud}>Check cloud backup</button><button type="button" disabled={busy} onClick={upload}>Upload this device's stock</button><button type="button" className="secondary" disabled={busy||!remote} onClick={restore}>Restore cloud backup</button><button type="button" className="secondary" onClick={()=>{sessionStorage.removeItem(tokenKey);setSession(null);setRemote(null)}}>Sign out</button></div>{remote&&<p className="muted">Cloud contains {remote.state?.products?.length||0} products, {remote.state?.batches?.length||0} batches and {remote.state?.sales?.length||0} sales.</p>}</>}
- {status&&<p role="status" className="muted">{status}</p>}</section>
+ {status&&<p role="status" className="muted">{status}</p>}</>}</section>
 }
