@@ -42,3 +42,5 @@ export async function commitInventoryRevision(expectedRevision,nextState){
  if(!result[0].saved)throw new CloudConflictError();
  return result[0].current_revision;
 }
+
+export async function commitCloudChange(transform){for(let n=0;n<3;n++){const current=await getLatestInventory();const result=transform(current.state);try{await commitInventoryRevision(Number(current.revision),result.state);return result}catch(e){if(!(e instanceof CloudConflictError)||n===2)throw e}}}
