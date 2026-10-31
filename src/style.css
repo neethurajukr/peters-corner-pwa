@@ -77,3 +77,14 @@ footer{color:#7892aa}
  input:focus-visible,button:focus-visible,select:focus-visible{outline:3px solid rgba(28,135,218,.35);outline-offset:2px}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+
+/* Billing identity panel, responsive to mobile screens */
+.pc-billing-layout{display:grid;grid-template-columns:minmax(155px,205px) minmax(0,1fr);align-items:start;gap:18px}
+.pc-billing-layout>main{min-width:0}
+.pc-billing-side{position:sticky;top:14px;border:1px solid #d8e9f6;border-radius:20px;padding:18px 12px 12px;text-align:center;background:linear-gradient(180deg,#e8f6ff 0%,#fff 100%);box-shadow:0 8px 25px rgba(16,89,154,.07)}
+.pc-billing-side-title{display:flex;justify-content:center;align-items:center;gap:8px;color:#1268af;font-weight:800}
+.pc-mascot{display:block;width:100%;max-width:185px;height:auto;margin:10px auto 0}
+.pc-billing-side p{font-size:12px;color:#47728d;margin:2px 0 5px}
+@media(prefers-reduced-motion:no-preference){.pc-mascot{animation:pc-enter .55s ease-out both}.pc-billing-side:hover .pc-mascot{transform:translateY(-3px);transition:transform .25s ease}}
+@media(max-width:700px){.pc-billing-layout{display:block}.pc-billing-side{position:static;display:flex;align-items:center;gap:10px;padding:7px 12px;margin-bottom:12px;text-align:left}.pc-billing-side-title{flex-shrink:0}.pc-mascot{width:55px;height:67px;object-fit:contain;margin:0 0 0 auto;order:2}.pc-billing-side p{margin:0;font-size:11px}}
